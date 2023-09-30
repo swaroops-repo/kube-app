@@ -13,7 +13,9 @@ spec:
     metadata:
       labels:
         app: vprodb
-    spec:   # This line was missing in the original YAML
+    spec:
+      nodeSelector:
+        zone: us-east-1a
       containers:
         - name: vprodb
           image: vprofile/vprofiledb:V1
@@ -31,17 +33,15 @@ spec:
                 secretKeyRef:
                   name: app-secret
                   key: db-pass
-  nodeSelector:
-    zone: us-east-1a
-  volumes:
-    - name: vpro-db-data
-      awsElasticBlockStore:
-        volumeID: vol-071e4d9f64db8c92b
-        fsType: ext4
-  initContainers:
-    - name: busybox
-      image: busybox:latest
-      args: ["rm","-rf","/var/lib/mysql/lost+found"]
-      volumeMounts:
-        - mountPath: /var/lib/mysql
-          name: vpro-db-data
+      volumes:
+        - name: vpro-db-data
+          awsElasticBlockStore:
+            volumeID: vol-071e4d9f64db8c92b
+            fsType: ext4
+      initContainers:
+        - name: busybox
+          image: busybox:latest
+          args: ["rm","-rf","/var/lib/mysql/lost+found"]
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: vpro-db-data
