@@ -19,14 +19,18 @@ spec:
       containers:
         - name: vprodb
           image: vprofile/vprofiledb:V1
-#          args:
-#            - "--ignore-db-dir=lost+found"
-          volumeMounts:
-            - mountPath: /var/lib/mysql
-              name: vpro-db-data
-          ports:
-            - name: vprodb-port
-              containerPort: 3306
+      tolerations:
+      - key: "node-role.kubernetes.io/control-plane"
+        operator: "Exists"
+        effect: "NoSchedule"
+#     args:
+#     - "--ignore-db-dir=lost+found"
+      volumeMounts:
+      - mountPath: /var/lib/mysql
+        name: vpro-db-data
+        ports:
+        - name: vprodb-port
+          containerPort: 3306
           env:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
