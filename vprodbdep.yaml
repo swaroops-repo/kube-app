@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: vprodb
-  labels: 
+  labels:
     app: vprodb
 spec:
   selector:
@@ -19,30 +19,33 @@ spec:
       containers:
         - name: vprodb
           image: vprofile/vprofiledb:V1
+          # Add your other container-related configurations here
+
       tolerations:
       - key: "node-role.kubernetes.io/control-plane"
         operator: "Exists"
         effect: "NoSchedule"
-#     args:
-#     - "--ignore-db-dir=lost+found"
+
+      # Add the rest of your template specifications here
       volumeMounts:
-      - mountPath: /var/lib/mysql
-        name: vpro-db-data
-        ports:
+        - mountPath: /var/lib/mysql
+          name: vpro-db-data
+      ports:
         - name: vprodb-port
           containerPort: 3306
-          env:
-            - name: MYSQL_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: app-secret
-                  key: db-pass
-                  
+      env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: db-pass
+
       volumes:
         - name: vpro-db-data
           awsElasticBlockStore:
             volumeID: vol-00fc6babee8ef0683
             fsType: ext4
+
       initContainers:
         - name: busybox
           image: busybox:latest
