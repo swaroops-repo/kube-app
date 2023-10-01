@@ -15,7 +15,7 @@ spec:
         app: vprodb
     spec:
       nodeSelector:
-        zone: us-east-1a
+        zone: us-east-1
       tolerations:  # Include tolerations at the same level as nodeSelector
         - key: "node-role.kubernetes.io/control-plane"
           operator: "Exists"
