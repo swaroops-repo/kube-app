@@ -16,29 +16,25 @@ spec:
     spec:
       nodeSelector:
         zone: us-east-1a
+      tolerations:  # Include tolerations at the same level as nodeSelector
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
       containers:
         - name: vprodb
           image: vprofile/vprofiledb:V1
-          # Add your other container-related configurations here
-
-      tolerations:
-      - key: "node-role.kubernetes.io/control-plane"
-        operator: "Exists"
-        effect: "NoSchedule"
-
-      # Add the rest of your template specifications here
-      volumeMounts:
-        - mountPath: /var/lib/mysql
-          name: vpro-db-data
-      ports:
-        - name: vprodb-port
-          containerPort: 3306
-      env:
-        - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: app-secret
-              key: db-pass
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: db-pass
+          ports:
+            - name: vprodb-port
+              containerPort: 3306
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: vpro-db-data
 
       volumes:
         - name: vpro-db-data
